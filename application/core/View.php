@@ -22,11 +22,11 @@ class View {
         if(isset($info['plugin'])) {
             $contentPath = 'plugins/' . $info['plugin'] . '/view/';
             $stylePath =  'plugins/' . $info['plugin'] . '/styles/';
-            $scriptPath = '/plugins/' . $info['plugin'] . '/scripts/';
+            $scriptPath = 'plugins/' . $info['plugin'] . '/scripts/';
         } else {
             $contentPath = 'application/view/pages/';
             $stylePath = 'public/css/pages/';
-            $scriptPath = '/public/js/';
+            $scriptPath = 'public/js/';
         }
 
         // Подготовка данных страницы
@@ -69,7 +69,7 @@ class View {
         if(D_MODE) $this->check('шаблона', $file);
         include_once $file;
 
-        foreach($this as $p => $v) unset($this[$p]);        // Очистка свойств
+        $this->settings = $this->scripts = $this->styles = $this->header = $this->partials = $this->icons = $this->size = $this->time = null;
     }
 
     // Загрузка стилей CSS
@@ -108,7 +108,7 @@ class View {
                 echo "link = document.createElement('SCRIPT');
                 link.async = true
                 link.defer = true
-                link.src = '$script'
+                link.src = '/$script'
                 document.querySelector('.wrapper').append(link);" . PHP_EOL;
             }
         }
