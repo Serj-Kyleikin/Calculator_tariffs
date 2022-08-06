@@ -28,9 +28,11 @@ async function loadData(url, time) {
         signal: controller.signal,
     });
 
-    clearTimeout(timeoutId);
+    if(response) {
 
-    return await response.json();
+        clearTimeout(timeoutId);
+        return await response.json();
+    }
 }
 
 async function sent(info, method) {
