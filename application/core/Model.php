@@ -114,7 +114,7 @@ class Model {
                 unset($data['settings']['icons']['count']);
 
                 $data['settings']['performance'] += ceil(filesize($_SERVER['DOCUMENT_ROOT'] . '/cache/' . $cache) / 1000);
-                $this->cache->write($cache_name, $data);
+                $this->cache->write($cache, $data);
             }
         }
 
