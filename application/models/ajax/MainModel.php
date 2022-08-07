@@ -37,13 +37,28 @@ class MainModel extends Model {
 
         if(isset($_COOKIE['user'])) {
 
-            $data['user_id'] = $this->getID();
-            $data['user_order'] = $_POST['order'];
-
             try {
 
-                $sent = $this->connection->prepare("INSERT INTO orders(user_id, user_order, date) VALUES(:user_id, :user_order, NOW())");
-                $sent->execute($data);
+                // Сохранение заказа
+
+                $this->connection->beginTransaction();
+                $this->connection->exec("LOCK TABLES orders WRITE, orders_info WRITE");
+
+                $saveOrder = $this->connection->prepare('INSERT INTO orders (date) VALUES(NOW())');
+                $saveOrder->execute();
+                $id = $this->connection->lastInsertId();
+
+                // Сохранение информации о заказе
+
+                $data['order_id'] = $id;
+                $data['user_id'] = $this->getID();
+                $data['user_order'] = $_POST['order'];
+
+                $saveInfo = $this->connection->prepare("INSERT INTO orders_info(order_id, user_id, user_order) VALUES(:order_id, :user_id, :user_order)");
+                $saveInfo->execute($data);
+
+                $this->connection->commit();
+                $this->connection->exec("UNLOCK TABLES");
 
             } catch(\PDOException $e) {
                 $this->log->logErrors($e, 1);
