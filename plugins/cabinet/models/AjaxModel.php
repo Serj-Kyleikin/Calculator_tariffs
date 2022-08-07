@@ -14,15 +14,18 @@ class AjaxModel extends Model {
         $tables = [
             'tariff' => 'offers',
             'option' => 'calculator',
-            'order' => 'orders'
+            'order' => 'orders_info'
         ];
 
         $data['id'] = $_POST['id'];
         $table = $tables[$_POST['entity']];
 
+        $query = "SELECT * FROM $table WHERE ";
+        $query .= ($table == 'orders_info') ? " order_id=:id ORDER BY order_id DESC LIMIT 1" : " id=:id ORDER BY id LIMIT 1";
+
         try {
 
-            $getInfo = $this->connection->prepare("SELECT * FROM $table WHERE id=:id ORDER BY id LIMIT 1");
+            $getInfo = $this->connection->prepare($query);
             $getInfo->execute($data);
             $result = $getInfo->fetch(PDO::FETCH_ASSOC);
 
@@ -30,7 +33,7 @@ class AjaxModel extends Model {
             $this->log->logErrors($e, 1);
         }
 
-        if($table == 'orders') $result = $this->getOrder($result);
+        if($table == 'orders_info') $result = $this->getOrder($result);
 
         echo json_encode($result);
     }

@@ -11,34 +11,29 @@ class PluginModel extends Model {
 
     public function getCabinet($info) {
 
-        // Тарифы
-
-        try {
-
-            $getTariffs = $this->connection->prepare('SELECT id, name FROM offers');
-            $getTariffs->execute();
-            $result['static']['tariffs'] = $getTariffs->fetchAll(PDO::FETCH_ASSOC);
-
-        } catch(\PDOException $e) {
-            logError($e, 1);
-        }
-
         // Настройки калькулятора
 
-        try {
+        $tables = [
+            'tariffs' => 'offers',
+            'calculator' => 'calculator'
+        ];
 
-            $getOptions = $this->connection->prepare('SELECT id, name FROM calculator');
-            $getOptions->execute();
-            $result['static']['calculator'] = $getOptions->fetchAll(PDO::FETCH_ASSOC);
+        foreach($tables as $content => $table) {
 
-        } catch(\PDOException $e) {
-            logError($e, 1);
+            try {
+
+                $getTariffs = $this->connection->prepare("SELECT id, name FROM $table");
+                $getTariffs->execute();
+                $result['static'][$content] = $getTariffs->fetchAll(PDO::FETCH_ASSOC);
+    
+            } catch(\PDOException $e) {
+                logError($e, 1);
+            }
         }
 
         // Заказы
 
         $result['pagination'] = $info['pagination'];
-
         $from = ($info['pagination']['this'] == 1) ? 0 : ($info['pagination']['this'] - 1) * $this->pagination;
 
         $result['dynamic']['options'] = $from;
@@ -75,7 +70,7 @@ class PluginModel extends Model {
 
         try {
 
-            $getOrders = $this->connection->prepare('SELECT id, date FROM orders ORDER BY id DESC LIMIT :from, :limit');
+            $getOrders = $this->connection->prepare('SELECT * FROM orders ORDER BY id DESC LIMIT :from, :limit');
             $getOrders->bindValue(':from', $from, PDO::PARAM_INT);
             $getOrders->bindValue(':limit', $this->pagination, PDO::PARAM_INT); 
             $getOrders->execute();
