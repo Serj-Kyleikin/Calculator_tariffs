@@ -17,15 +17,13 @@ class AjaxModel extends Model {
             'order' => 'orders_info'
         ];
 
-        $data['id'] = $_POST['id'];
         $table = $tables[$_POST['entity']];
-
-        $query = "SELECT * FROM $table WHERE ";
-        $query .= ($table == 'orders_info') ? " order_id=:id ORDER BY order_id DESC LIMIT 1" : " id=:id ORDER BY id LIMIT 1";
+        $row = ($table == 'orders_info') ? "order_id" : "id";
+        $data['id'] = $_POST['id'];
 
         try {
 
-            $getInfo = $this->connection->prepare($query);
+            $getInfo = $this->connection->prepare("SELECT * FROM $table WHERE $row=:id ORDER BY $row LIMIT 1");
             $getInfo->execute($data);
             $result = $getInfo->fetch(PDO::FETCH_ASSOC);
 
