@@ -40,7 +40,7 @@ h3 {
     display: flex;
     align-items: center;
     flex-flow: row wrap;
-    margin-bottom: 10px;
+    margin: 20px 0;
 }
 .hint {
     position: absolute;
@@ -79,8 +79,7 @@ h3 {
 }
 .choosed > span {
     width: 100%;
-    margin-left: 35px;
-    margin-top: 20px;
+    margin: 10px 0 0 35px;
 }
 
 
