@@ -9,7 +9,7 @@ document.querySelectorAll('.information_tab').forEach((item) => {
 
 // Содержимое меню
 
-let DIV, selector;
+let DIV, selector, node, date;
 
 async function getInfo(entity) {
 
@@ -35,9 +35,15 @@ async function getInfo(entity) {
 
             DIV = document.createElement('div');
             DIV.className = entity + ' actived';
-            DIV.dataset.id = response.id;
+            DIV.dataset.id = item.dataset.id;
 
-            let node = (entity == 'order') ? item.nextElementSibling : item;
+            if(entity == 'order') {
+
+                node = item.nextElementSibling;
+                date = item.textContent;
+
+            } else node = item;
+
             node.after(DIV);
 
             let methods = {
@@ -83,7 +89,7 @@ function renderOrder(response) {
         create('hr');
     }
 
-    create('div', 'Дата:', response.date);
+    create('div', 'Дата:', date);
 }
 
 function renderTariff(response) {
